@@ -29,6 +29,7 @@ import { useChainConfig } from '../hooks/useChainConfig'
 import { MainnetContext } from '@/pages/_app'
 import ERC20ABI from './abi/ERC20.json'
 import USDCBridgeABI from './abi/USDCBridge.json'
+import ThirdParty from './ThirdParty'
 const optimismSDK = require('@eth-optimism/sdk')
 const ethers = require('ethers')
 
@@ -409,6 +410,7 @@ const Withdraw: React.FC = () => {
           <title>Withdraw</title>
           <meta name="description" content="Withdraw SwanETH to receive ETH" />
         </Head>
+        <div>
         <div className={loaded ? 'loaded bridge_wrap' : 'bridge_wrap'}>
           {iconLoader ? <SuccessIcon parentMessage={iconStatus} /> : <></>}
           <TabMenu />
@@ -743,6 +745,8 @@ const Withdraw: React.FC = () => {
               {/* )} */}
             </div>
           </section>
+        </div>
+        <ThirdParty />
         </div>
       </>
     )

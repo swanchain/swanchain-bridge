@@ -1,0 +1,100 @@
+.third-party {
+    width: 94%;
+    max-width: 420px;
+    min-width: 300px;
+    background: rgba(0, 0, 0, 0.32);
+    border-radius: 0.16rem;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    padding: 20px;
+    margin: 0px auto 30px;
+    border-radius: 36px;
+    box-shadow: 0 0 8px -4px #14171a1f, 0 4px 16px -1px #14171a14;
+    .title {
+      font-size: 20px;
+      text-align: center;
+      line-height: unset;
+    }
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      margin-top: 22px;
+    }
+    &-card {
+      position: relative;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      gap: 20px;
+      cursor: pointer;
+
+      .card {
+        &-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
+        &-name {
+          font-size: 18px;
+          line-height: 22px;
+        }
+
+        &-description {
+          font-size: 13px;
+          line-height: 16px;
+          color: #CED4DA;
+        }
+      }
+      &.is-disabled {
+        cursor: no-drop;
+      }
+      &:hover {
+        border-color: var(--color-light);
+      }
+      .coming-soon {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: var(--color-black-opacity);
+        backdrop-filter: blur(4px);
+        border-radius: 0.16rem;
+        z-index: 9;
+        &.none {
+          display: none !important;
+        }
+      }
+      img {
+        width: 0.4rem;
+        height: 0.4rem;
+        border-radius: 1rem;
+        @media screen and (max-width: 767px) {
+          width: 25px;
+          height: 25px;
+        }
+      }
+    }
+  }
+
+.or {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 auto;
+  padding: 20px;
+  &-line {
+    flex: 1;
+    height: 1px;
+    background-color: rgba(255,255,255,.24);
+  }
+  &-main {
+    color: white;
+    font-size: 18px;
+    padding: .1rem;
+  }
+}
