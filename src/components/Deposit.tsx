@@ -341,7 +341,7 @@ const Deposit: React.FC = () => {
               <div className="deposit_price_wrap flex-row jc">
                 <div className="deposit_price_title flex-row">
                   {l1ChainInfo.name === 'Ethereum' ||
-                    l1ChainInfo.name === 'Sepolia' ? (
+                  l1ChainInfo.name === 'Sepolia' ? (
                     <NextImage
                       src="/assets/images/network-ethereum.svg"
                       alt="To icn"
@@ -420,14 +420,14 @@ const Deposit: React.FC = () => {
                         onChange={({ target }) => setSendToken(target.value)}
                       >
                         <option value="ETH">ETH</option>
-                        {l1ChainInfo.chainId == 11155111 ? (
+                        {/*l1ChainInfo.chainId == 11155111 ? (
                           <>
                             <option value="USDC">USDC</option>
                             <option value="tSWAN">tSWAN</option>
                           </>
                         ) : (
                           <></>
-                        )}
+                        )*/}
                         {/* <option value="DAI">DAI</option>
                           <option value="USDT">USDT</option>
                           <option value="wBTC">wBTC</option>  */}
@@ -444,7 +444,7 @@ const Deposit: React.FC = () => {
                   <small className="text-danger">{errorInput}</small>
                 )}
                 {Number(chain?.id) == Number(l1ChainInfo.chainId) &&
-                  balanceShow !== undefined ? (
+                balanceShow !== undefined ? (
                   address && (
                     <p className="wallet_bal text-right mt-2">
                       {balance?.formatted} {balance?.symbol} available
@@ -481,8 +481,8 @@ const Deposit: React.FC = () => {
                     To address
                   </span>
                   {l2ChainInfo &&
-                    l2ChainInfo.contracts &&
-                    l2ChainInfo.contracts.l1StandardBridge ? (
+                  l2ChainInfo.contracts &&
+                  l2ChainInfo.contracts.l1StandardBridge ? (
                     <p className="green flex-row">
                       {l2ChainInfo.contracts.l1StandardBridge?.slice(0, 4)}...
                       {l2ChainInfo.contracts.l1StandardBridge?.slice(-4)}
@@ -604,28 +604,28 @@ const Deposit: React.FC = () => {
                   <button
                     className={
                       !isPending &&
-                        !isConfirming &&
-                        !isWriteContractPending &&
-                        !isWriteContractConfirming &&
-                        ethValue &&
-                        Number(ethValue) > 0
+                      !isConfirming &&
+                      !isWriteContractPending &&
+                      !isWriteContractConfirming &&
+                      ethValue &&
+                      Number(ethValue) > 0
                         ? 'btn deposit_btn flex-row'
                         : 'btn deposit_btn deposit_btn_disabled flex-row'
                     }
                     onClick={handleDeposit}
                     disabled={
                       isPending ||
-                        isConfirming ||
-                        isWriteContractConfirming ||
-                        isWriteContractPending
+                      isConfirming ||
+                      isWriteContractConfirming ||
+                      isWriteContractPending
                         ? true
                         : false
                     }
                   >
                     {isConfirming ||
-                      isPending ||
-                      isWriteContractConfirming ||
-                      isWriteContractPending ? (
+                    isPending ||
+                    isWriteContractConfirming ||
+                    isWriteContractPending ? (
                       <Spinner animation="border" role="status">
                         <span className="visually-hidden btn deposit_btn_disabled">
                           Loading...
