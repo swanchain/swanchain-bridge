@@ -143,6 +143,8 @@ export const SWAN_MAINNET = {
       process.env.NEXT_PUBLIC_SWAN_PROXY_OVM_L1CROSSDOMAINMESSENGER,
     l1StandardBridge: process.env.NEXT_PUBLIC_SWAN_PROXY_OVM_L1STANDARDBRIDGE,
     l2OutputOracle: process.env.NEXT_PUBLIC_L2_SWAN_OUTPUTORACLE_PROXY,
+    l1SwanToken: process.env.NEXT_PUBLIC_ETHEREUM_SWAN_TOKEN,
+    l2SwanToken: process.env.NEXT_PUBLIC_SWAN_SWAN_TOKEN,
   },
 }
 

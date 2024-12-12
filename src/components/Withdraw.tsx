@@ -36,7 +36,7 @@ const ethers = require('ethers')
 const getTokenAddress = (token: string, l2ChainInfo: any) => {
   if (token == 'USDC.e' && l2ChainInfo) {
     return l2ChainInfo.contracts.l2Usdc
-  } else if (token == 'tSWAN') {
+  } else if (token == 'SWAN') {
     return l2ChainInfo.contracts.l2SwanToken
   }
   return undefined
@@ -45,11 +45,11 @@ const getTokenAddress = (token: string, l2ChainInfo: any) => {
 const receivingTokens: {
   swanETH: string
   'USDC.e': string
-  tSWAN: string
+  SWAN: string
 } = {
   swanETH: 'ETH',
   'USDC.e': 'USDC',
-  tSWAN: 'tSWAN',
+  SWAN: 'SWAN',
 }
 
 const Withdraw: React.FC = () => {
@@ -169,7 +169,7 @@ const Withdraw: React.FC = () => {
           account: address,
         })
         setIsApproving(false)
-      } else if (sendToken == 'tSWAN') {
+      } else if (sendToken == 'SWAN') {
         let swanInWei = ethers.utils.parseEther(ethValue)
         writeContract({
           abi: USDCBridgeABI,
@@ -234,7 +234,7 @@ const Withdraw: React.FC = () => {
                   account: address,
                 })
               }
-            } else if (sendToken == 'tSWAN') {
+            } else if (sendToken == 'SWAN') {
               const swanInWei = ethers.utils.parseEther(ethValue)
               if (Number(tokenAllowance) < Number(swanInWei)) {
                 writeContract({
@@ -513,11 +513,16 @@ const Withdraw: React.FC = () => {
                         {/*l1ChainInfo.chainId == 11155111 ? (
                         <>
                           <option value="USDC.e">USDC.e</option>
-                          <option value="tSWAN">tSWAN</option>
+                          <option value="SWAN">SWAN</option>
                         </>
                       ) : (
                         <></>
                       )*/}
+                        l1ChainInfo.chainId == 1 ? (
+                        <>
+                          <option value="SWAN">SWAN</option>
+                        </>
+                        ) : (<></>)
                       </Form.Select>
                     </div>
                     {/* <div className="input_icn_wrap">
@@ -623,7 +628,7 @@ const Withdraw: React.FC = () => {
                     {ethValue && address ? ethValue : '-'}{' '}
                     {
                       receivingTokens[
-                        sendToken as 'swanETH' | 'USDC.e' | 'tSWAN'
+                        sendToken as 'swanETH' | 'USDC.e' | 'SWAN'
                       ]
                     }
                   </p>

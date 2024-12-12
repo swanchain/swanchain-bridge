@@ -33,17 +33,19 @@ const receivingTokens: {
   ETH: string
   USDC: string
   tSWAN: string
+  SWAN: string
 } = {
   ETH: 'swanETH',
   USDC: 'USDC.e',
   tSWAN: 'tSWAN',
+  SWAN: 'SWAN',
 }
 //l2ChainInfo.contracts?.l1Usdc as `0x${string}`
 
 const getTokenAddress = (token: string, l2ChainInfo: any) => {
   if (token == 'USDC' && l2ChainInfo) {
     return l2ChainInfo.contracts.l1Usdc
-  } else if (token == 'tSWAN') {
+  } else if (token == 'tSWAN' || token == 'SWAN') {
     return l2ChainInfo.contracts.l1SwanToken
   }
   return undefined
@@ -162,7 +164,7 @@ const Deposit: React.FC = () => {
                 account: address,
               })
             }
-          } else if (sendToken === 'tSWAN') {
+          } else if (sendToken === 'tSWAN' || sendToken === 'SWAN') {
             const swanInWei = ethers.utils.parseEther(ethValue)
             if (Number(tokenAllowance) < Number(swanInWei)) {
               writeContract({
@@ -304,7 +306,7 @@ const Deposit: React.FC = () => {
           account: address,
         })
         setIsApproving(false)
-      } else if (sendToken == 'tSWAN') {
+      } else if (sendToken == 'tSWAN' || sendToken == 'SWAN') {
         let swanInWei = ethers.utils.parseEther(ethValue)
         writeContract({
           abi: USDCBridgeABI,
@@ -428,6 +430,11 @@ const Deposit: React.FC = () => {
                         ) : (
                           <></>
                         )*/}
+                        l1ChainInfo.chainId == 1 ? (
+                        <>
+                          <option value="SWAN">SWAN</option>
+                        </>
+                        ) : (<></>)
                         {/* <option value="DAI">DAI</option>
                           <option value="USDT">USDT</option>
                           <option value="wBTC">wBTC</option>  */}
@@ -529,7 +536,11 @@ const Deposit: React.FC = () => {
                   </span>
                   <p>
                     {ethValue && address ? ethValue : '-'}{' '}
-                    {receivingTokens[sendToken as 'ETH' | 'USDC' | 'tSWAN']}
+                    {
+                      receivingTokens[
+                        sendToken as 'ETH' | 'USDC' | 'tSWAN' | 'SWAN'
+                      ]
+                    }
                   </p>
                 </div>
               </div>
