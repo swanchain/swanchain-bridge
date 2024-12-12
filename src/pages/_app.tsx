@@ -106,8 +106,8 @@ export const SWAN_PROXIMA = {
     l2UsdcBridge: process.env.NEXT_PUBLIC_PROXIMA_USDC_BRIDGE,
     l1Usdc: process.env.NEXT_PUBLIC_SEPOLIA_USDC,
     l2Usdc: process.env.NEXT_PUBLIC_PROXIMA_USDC,
-    l1SwanToken: process.env.NEXT_PUBLIC_SEPOLIA_SWAN_TOKEN,
-    l2SwanToken: process.env.NEXT_PUBLIC_PROXIMA_SWAN_TOKEN,
+    // l1SwanToken: process.env.NEXT_PUBLIC_SEPOLIA_SWAN_TOKEN,
+    // l2SwanToken: process.env.NEXT_PUBLIC_PROXIMA_SWAN_TOKEN,
   },
 }
 
