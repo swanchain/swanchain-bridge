@@ -241,15 +241,16 @@ const Withdraw: React.FC = () => {
                   abi: ERC20ABI,
                   address: l2ChainInfo.contracts.l2SwanToken,
                   functionName: 'approve',
-                  args: [l2ChainInfo.contracts.l2StandardBridge, swanInWei],
+                  args: [L2StandardBridge, swanInWei],
                   account: address,
                 })
 
                 setIsApproving(true)
               } else {
+                console.log(l2ChainInfo)
                 writeContract({
                   abi: USDCBridgeABI,
-                  address: l2ChainInfo.contracts.l2StandardBridge,
+                  address: L2StandardBridge,
                   functionName: 'bridgeERC20',
                   args: [
                     l2ChainInfo.contracts.l2SwanToken,
