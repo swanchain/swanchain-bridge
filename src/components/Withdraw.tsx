@@ -247,7 +247,6 @@ const Withdraw: React.FC = () => {
 
                 setIsApproving(true)
               } else {
-                console.log(l2ChainInfo)
                 writeContract({
                   abi: USDCBridgeABI,
                   address: L2StandardBridge,
