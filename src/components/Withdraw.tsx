@@ -579,10 +579,10 @@ const Withdraw: React.FC = () => {
                   </span>
                   {l2ChainInfo &&
                   l2ChainInfo.contracts &&
-                  l2ChainInfo.contracts.l1StandardBridge ? (
+                  l2ChainInfo.contracts.l2Bridge ? (
                     <p className="green flex-row">
-                      {l2ChainInfo.contracts.l1StandardBridge?.slice(0, 4)}...
-                      {l2ChainInfo.contracts.l1StandardBridge?.slice(-4)}
+                      {l2ChainInfo.contracts.l2Bridge?.slice(0, 4)}...
+                      {l2ChainInfo.contracts.l2Bridge?.slice(-4)}
                       <svg
                         className="icon"
                         viewBox="0 0 1024 1024"
