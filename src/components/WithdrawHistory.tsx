@@ -130,9 +130,9 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
                   toBlock: blockNumber,
                 }) 
 
-                const withdrawEvent = events.filter(e => typeof e !== 'string') .filter(e => e.transactionHash == tx_hash)
-                const withdrawTx = withdrawEvent.length > 0 ? withdrawEvent[0] : {returnValues: {l2Token: 'swanETH', amount}}
-                const l2Token = withdrawTx.returnValues.l2Token 
+                const withdrawEvent: any = events.filter(e => typeof e !== 'string') .filter(e => e.transactionHash == tx_hash)
+                const withdrawTx: any = withdrawEvent.length > 0 ? withdrawEvent[0] : {returnValues: {l2Token: 'swanETH', amount}}
+                const l2Token: any = withdrawTx.returnValues.l2Token 
 
                 if (l2Token != '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') {
                   let tokenContract = new web3.eth.Contract(ERC20ABI, withdrawTx.returnValues.l2Token as any)
