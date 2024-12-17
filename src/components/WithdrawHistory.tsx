@@ -13,6 +13,9 @@ import axios from 'axios'
 import ReactPaginate from 'react-paginate'
 import { useChainConfig } from '../hooks/useChainConfig'
 import { MainnetContext } from '@/pages/_app'
+import Web3 from 'web3'
+import StandardBridgeABI from './abi/StandardBridge.json'
+import ERC20ABI from './abi/ERC20.json'
 
 const { ethers } = require('ethers')
 const optimismSDK = require('@eth-optimism/sdk')
@@ -82,6 +85,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
         let data = await response.json()
         let withdrawal_data = data.data
         let withdrawal_list = withdrawal_data.withdraw_transaction_list || []
+        console.log('API', withdrawal_list)
 
         const providers = chainInfoFromConfig
           .slice(2)
@@ -96,11 +100,12 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
             return acc
           }, {})
 
-        console.log(providers)
-
         withdrawal_list = await Promise.all(
           withdrawal_list
-            .filter((w: any) => {console.log(w); return (w.chain_id != 2024)})
+            .filter((w: any) => {
+              console.log(w)
+              return w.chain_id != 2024
+            })
             .map(async (w: any) => {
               let tx_hash = w.withdraw_tx_hash
               // w.withdraw_tx_hash.slice(0, 2) == '0x'
@@ -108,19 +113,48 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
               //   : `0x${w.withdraw_tx_hash}`
 
               let receipt = await providers[w.chain_id].getTransaction(tx_hash)
-              // let block = await providers[w.chain_id].getBlock(
-              //   receipt.blockNumber,
-              // )
+              let amount = ethers.utils.formatEther(receipt.value)
+              let tokenSymbol = 'swanETH'
+
+              if (receipt.value == 0) {
+                console.log('ERC20 withdraw found')
+
+                let blockNumber = receipt.blockNumber
+
+                let web3 = new Web3(providers[w.chain_id].connection.url)
+
+                let contract = new web3.eth.Contract(StandardBridgeABI, chainInfoAsObject[w.chain_id].contracts.l2Bridge)
+
+                const events = await contract.getPastEvents('WithdrawalInitiated' as 'allEvents', {
+                  fromBlock: blockNumber,
+                  toBlock: blockNumber,
+                }) 
+
+                const withdrawEvent = events.filter(e => typeof e !== 'string') .filter(e => e.transactionHash == tx_hash)
+                const withdrawTx = withdrawEvent.length > 0 ? withdrawEvent[0] : {returnValues: {l2Token: 'swanETH', amount}}
+                const l2Token = withdrawTx.returnValues.l2Token 
+
+                if (l2Token != '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') {
+                  let tokenContract = new web3.eth.Contract(ERC20ABI, withdrawTx.returnValues.l2Token as any)
+                  tokenSymbol = await tokenContract.methods.symbol().call()
+                  amount = ethers.utils.formatEther(withdrawTx.returnValues.amount)
+                }
+                
+              }
+
               return {
                 ...w,
                 tx_hash,
-                amount: ethers.utils.formatEther(receipt.value),
+                amount,
                 // timestamp: block.timestamp,
                 block_number: receipt.blockNumber,
+                tokenSymbol
                 // receipt: await l2Provider.getTransaction(tx_hash),
               }
             }),
         )
+
+        console.log('list', withdrawal_list)
 
         // let receipt = await l2Provider.getTransaction(
         //   withdrawal_list[0].tx_hash,
@@ -305,7 +339,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
       // })
 
       // console.log(result.data)
-    } catch (error: any) {
+    } catch (error:any) {
       setLoader(false)
       if (
         error.reason ===
@@ -392,6 +426,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
               <table>
                 <thead>
                   <tr>
+                    <th>Token</th>
                     <th>Amount</th>
                     <th>Network</th>
                     <th>Transaction Hash</th>
@@ -409,6 +444,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
                         }
                       }}
                     >
+                      <td>{withdrawal.tokenSymbol}</td>
                       <td>{withdrawal.amount}</td>
                       <td>
                         {chainInfoAsObject[withdrawal.chain_id]
@@ -471,7 +507,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
                   </div>
                   <div className="modal-amoumt">
                     <span className="title">Amount to withdraw</span>
-                    <span className="text">{modalData.amount} swanETH</span>
+                    <span className="text">{modalData.amount} {modalData.tokenSymbol}</span>
                   </div>
                   <div className="withdraw-flow">
                     <ul>

@@ -24,7 +24,7 @@ import { useChainConfig } from '../hooks/useChainConfig'
 import { useEthPrice } from '../hooks/useEthPrice'
 import { MainnetContext } from '@/pages/_app'
 import ERC20ABI from './abi/ERC20.json'
-import USDCBridgeABI from './abi/USDCBridge.json'
+import StandardBridgeABI from './abi/StandardBridge.json'
 import ThirdParty from './ThirdParty'
 const optimismSDK = require('@eth-optimism/sdk')
 const ethers = require('ethers')
@@ -151,7 +151,7 @@ const Deposit: React.FC = () => {
               setIsApproving(true)
             } else {
               writeContract({
-                abi: USDCBridgeABI,
+                abi: StandardBridgeABI,
                 address: l2ChainInfo.contracts.l1UsdcBridge,
                 functionName: 'bridgeERC20',
                 args: [
@@ -178,7 +178,7 @@ const Deposit: React.FC = () => {
               setIsApproving(true)
             } else {
               writeContract({
-                abi: USDCBridgeABI,
+                abi: StandardBridgeABI,
                 address: l2ChainInfo.contracts.l1StandardBridge,
                 functionName: 'bridgeERC20',
                 args: [
@@ -293,7 +293,7 @@ const Deposit: React.FC = () => {
       if (sendToken == 'USDC') {
         let usdcInWei = ethers.utils.parseUnits(ethValue, 'mwei')
         writeContract({
-          abi: USDCBridgeABI,
+          abi: StandardBridgeABI,
           address: l2ChainInfo.contracts.l1UsdcBridge,
           functionName: 'bridgeERC20',
           args: [
@@ -309,7 +309,7 @@ const Deposit: React.FC = () => {
       } else if (sendToken == 'tSWAN' || sendToken == 'SWAN') {
         let swanInWei = ethers.utils.parseEther(ethValue)
         writeContract({
-          abi: USDCBridgeABI,
+          abi: StandardBridgeABI,
           address: l2ChainInfo.contracts.l1StandardBridge,
           functionName: 'bridgeERC20',
           args: [
