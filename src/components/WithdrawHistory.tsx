@@ -153,23 +153,14 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
               }
             }),
         )
-
-        console.log('list', withdrawal_list)
-
-        // let receipt = await l2Provider.getTransaction(
-        //   withdrawal_list[0].tx_hash,
-        // )
-
-        // console.log(await l2Provider.getBlock(receipt.blockNumber))
-
         setTotalRows(withdrawal_data.total)
 
-        // console.log(withdrawal_list)
         setWithdrawals(withdrawal_list)
+        setLoader(false)
       } catch (error) {
         console.error('Error fetching data:', error)
+        setLoader(false)
       }
-      setLoader(false)
     }
 
     if (address && isConnected && chainInfoAsObject) fetchData()
@@ -436,6 +427,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
                 <tbody>
                   {withdrawals.map((withdrawal: any, index) => (
                     <tr
+                      className='withdraw-row'
                       key={index}
                       onClick={async (e: any) => {
                         // console.log('td:', e.target.className)
@@ -513,7 +505,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
                     <ul>
                       <li
                         className="withdraw-step done"
-                        onClick={() => console.log(modalData)}
+                        // onClick={() => console.log(modalData)}
                       >
                         <GrSend size={28} />
                         Initiate withdraw
