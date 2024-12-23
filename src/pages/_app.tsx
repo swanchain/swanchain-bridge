@@ -164,7 +164,15 @@ const metadata = {
 export const wagmiConfig = defaultWagmiConfig({
   chains: [
     sepolia,
-    { ...mainnet, testnet: false },
+    {
+      ...mainnet,
+      testnet: false,
+      rpcUrls: {
+        default: {
+          http: ['https://eth.llamarpc.com'],
+        },
+      },
+    },
     SWAN_PROXIMA,
     // SWAN_SATURN,
     SWAN_MAINNET,
