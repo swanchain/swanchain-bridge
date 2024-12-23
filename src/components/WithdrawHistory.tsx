@@ -107,6 +107,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
               return w.chain_id != 2024
             })
             .map(async (w: any) => {
+              setLoader(true)
               let tx_hash = w.withdraw_tx_hash
               // w.withdraw_tx_hash.slice(0, 2) == '0x'
               //   ? w.withdraw_tx_hash
@@ -141,6 +142,9 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
                 }
                 
               }
+
+
+              setLoader(false)
 
               return {
                 ...w,
@@ -397,6 +401,10 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
     // Check if 7 or more days have passed
     return diffDays >= 7
   }
+
+  // if (loader) {
+  //   return <div className="loading-text">Loading...</div>
+  // }
 
   if (chainInfoAsObject) {
     return (
