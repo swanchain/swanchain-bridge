@@ -1,47 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 
 interface Bridge {
-  name: string;
-  description: string;
-  url: string;
-  icon: string;
+  name: string
+  description: string
+  url: string
+  icon: string
 }
 
 const dummyData: Bridge[] = [
-  {
-    name: 'Comet Bridge',
-    description: 'Bridge to Swan Chain and verify your transaction to earn Comet\'s XP',
-    url: 'https://cometbridge.app/?original=Arbitrum&target=Morph%20Mainnet&symbol=ETH&channel=NP7rF5',
-    icon: '/assets/images/comet.png',
-  },
-  {
-    name: 'Meme Bridge',
-    description: 'Move any assets across the crypto universe without the constraints of traditional bridges.',
-    url: 'https://www.memebridge.xyz/#/bridge/?original=Ethereum&target=Swan&symbol=ETH',
-    icon: '/assets/images/meme.png',
-  },
-  {
-    name: 'Owltto Finance',
-    description: 'Earn extra 150 Owltto Points per transaction bridging to Swan Chain',
-    url: 'https://owlto.finance/?channel=3431&to=Swan',
-    icon: '/assets/images/owlto.png',
-  },
   {
     name: 'Superbridge',
     description: 'Native bridging for rollups',
     url: 'https://superbridge.app/swan-chain',
     icon: '/assets/images/super.png',
-  }
-];
+  },
+  {
+    name: 'Comet Bridge',
+    description:
+      "Bridge to Swan Chain and verify your transaction to earn Comet's XP",
+    url:
+      'https://cometbridge.app/?original=Arbitrum&target=Morph%20Mainnet&symbol=ETH&channel=NP7rF5',
+    icon: '/assets/images/comet.png',
+  },
+  {
+    name: 'Meme Bridge',
+    description:
+      'Move any assets across the crypto universe without the constraints of traditional bridges.',
+    url:
+      'https://www.memebridge.xyz/#/bridge/?original=Ethereum&target=Swan&symbol=ETH',
+    icon: '/assets/images/meme.png',
+  },
+  {
+    name: 'Owltto Finance',
+    description:
+      'Earn extra 150 Owltto Points per transaction bridging to Swan Chain',
+    url: 'https://owlto.finance/?channel=3431&to=Swan',
+    icon: '/assets/images/owlto.png',
+  },
+]
 
 const ThirdParty: React.FC = () => {
-  const [list, setList] = useState<Bridge[]>(dummyData);
+  const [list, setList] = useState<Bridge[]>(dummyData)
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    setList(dummyData);
+    setList(dummyData)
     setLoaded(true)
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (loaded) {
@@ -50,8 +55,8 @@ const ThirdParty: React.FC = () => {
   }, [loaded])
 
   const openLink = (url: string) => {
-    window.open(url, '_blank');
-  };
+    window.open(url, '_blank')
+  }
 
   return (
     <>
@@ -61,15 +66,15 @@ const ThirdParty: React.FC = () => {
         <div className="or-line"></div>
       </div>
       <div className="loaded third-party">
-        <div className="title">
-          Using third-party bridges
-        </div>
-        <div className='content'>
+        <div className="title">Using third-party bridges</div>
+        <div className="content">
           {list.map((item, index) => (
             <div
               key={index}
               onClick={() => openLink(item.url)}
-              className={`third-party-card ${item.url?'pointer':'is-disabled'}`}
+              className={`third-party-card ${
+                item.url ? 'pointer' : 'is-disabled'
+              }`}
             >
               <div className="card-wrapper">
                 <img
@@ -110,7 +115,7 @@ const ThirdParty: React.FC = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default ThirdParty;
+export default ThirdParty
