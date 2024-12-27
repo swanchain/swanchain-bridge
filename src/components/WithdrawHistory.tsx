@@ -163,7 +163,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
         setLoader(false)
       } catch (error) {
         console.error('Error fetching data:', error)
-        setLoader(false)
+        // setLoader(false)
       }
     }
 
