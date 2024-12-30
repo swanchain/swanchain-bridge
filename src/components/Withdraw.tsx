@@ -415,17 +415,6 @@ const Withdraw: React.FC = () => {
             {iconLoader ? <SuccessIcon parentMessage={iconStatus} /> : <></>}
             <TabMenu />
             <section className="deposit_wrap">
-              <div className="withdraw_title_wrap">
-            <div className="withdraw_title_icn">
-              <MdOutlineSecurity />
-            </div>
-            <div className="withdraw_title_content">
-              {/* <h3>Use the official bridge</h3> */}
-              <p>After the withdraw request is received on L1, you will need to prove the withdrawal in the Withdraw History tab.</p>
-              <p>After proving, you can finalize the withdrawal after <strong>7 days</strong>.</p>
-              {/* <p>Bridge any token to Sepolia Testnet</p> */}
-            </div>
-          </div>
               <div className="deposit_price_wrap flex-row jc">
                 <div className="deposit_price_title flex-row">
                   <NextImage
@@ -739,6 +728,18 @@ const Withdraw: React.FC = () => {
                     )}
                   </button>
                 )}
+
+              <div className="withdraw_title_wrap">
+            <div className="withdraw_title_icn">
+              <MdOutlineSecurity />
+            </div>
+            <div className="withdraw_title_content">
+              {/* <h3>Use the official bridge</h3> */}
+              <p>After the withdraw request is received on L1 (approx 12hr), you will need to prove the withdrawal in the Withdraw History tab.</p>
+              <p>After proving, you can finalize the withdrawal after <strong>7 days</strong>.</p>
+              {/* <p>Bridge any token to Sepolia Testnet</p> */}
+            </div>
+          </div>
                 {/* {isMainnet ? (
                 <p
                   style={{
