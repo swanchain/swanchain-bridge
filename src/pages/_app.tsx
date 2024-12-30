@@ -106,8 +106,8 @@ export const SWAN_PROXIMA = {
     l2UsdcBridge: process.env.NEXT_PUBLIC_PROXIMA_USDC_BRIDGE,
     l1Usdc: process.env.NEXT_PUBLIC_SEPOLIA_USDC,
     l2Usdc: process.env.NEXT_PUBLIC_PROXIMA_USDC,
-    l1SwanToken: process.env.NEXT_PUBLIC_SEPOLIA_SWAN_TOKEN,
-    l2SwanToken: process.env.NEXT_PUBLIC_PROXIMA_SWAN_TOKEN,
+    // l1SwanToken: process.env.NEXT_PUBLIC_SEPOLIA_SWAN_TOKEN,
+    // l2SwanToken: process.env.NEXT_PUBLIC_PROXIMA_SWAN_TOKEN,
   },
 }
 
@@ -143,6 +143,8 @@ export const SWAN_MAINNET = {
       process.env.NEXT_PUBLIC_SWAN_PROXY_OVM_L1CROSSDOMAINMESSENGER,
     l1StandardBridge: process.env.NEXT_PUBLIC_SWAN_PROXY_OVM_L1STANDARDBRIDGE,
     l2OutputOracle: process.env.NEXT_PUBLIC_L2_SWAN_OUTPUTORACLE_PROXY,
+    l1SwanToken: process.env.NEXT_PUBLIC_ETHEREUM_SWAN_TOKEN,
+    l2SwanToken: process.env.NEXT_PUBLIC_SWAN_SWAN_TOKEN,
   },
 }
 
@@ -162,7 +164,15 @@ const metadata = {
 export const wagmiConfig = defaultWagmiConfig({
   chains: [
     sepolia,
-    { ...mainnet, testnet: false },
+    {
+      ...mainnet,
+      testnet: false,
+      rpcUrls: {
+        default: {
+          http: ['https://eth.llamarpc.com'],
+        },
+      },
+    },
     SWAN_PROXIMA,
     // SWAN_SATURN,
     SWAN_MAINNET,

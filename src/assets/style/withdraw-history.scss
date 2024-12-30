@@ -28,13 +28,16 @@ tbody tr:nth-child(even) {
 }
 
 tbody tr:hover {
-  background-color: var(--tab-color);
+  // background-color: var(--tab-color);
+  background-color:  darkgray;
+  opacity: 0.8;
   cursor: pointer;
 }
 
 tbody td {
   color: var(--text-color);
 }
+
 
 .history_wrap {
   display: flex;

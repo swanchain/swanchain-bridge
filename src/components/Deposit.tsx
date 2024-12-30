@@ -24,7 +24,7 @@ import { useChainConfig } from '../hooks/useChainConfig'
 import { useEthPrice } from '../hooks/useEthPrice'
 import { MainnetContext } from '@/pages/_app'
 import ERC20ABI from './abi/ERC20.json'
-import USDCBridgeABI from './abi/USDCBridge.json'
+import StandardBridgeABI from './abi/StandardBridge.json'
 import ThirdParty from './ThirdParty'
 const optimismSDK = require('@eth-optimism/sdk')
 const ethers = require('ethers')
@@ -33,17 +33,19 @@ const receivingTokens: {
   ETH: string
   USDC: string
   tSWAN: string
+  SWAN: string
 } = {
   ETH: 'swanETH',
   USDC: 'USDC.e',
   tSWAN: 'tSWAN',
+  SWAN: 'SWAN',
 }
 //l2ChainInfo.contracts?.l1Usdc as `0x${string}`
 
 const getTokenAddress = (token: string, l2ChainInfo: any) => {
   if (token == 'USDC' && l2ChainInfo) {
     return l2ChainInfo.contracts.l1Usdc
-  } else if (token == 'tSWAN') {
+  } else if (token == 'tSWAN' || token == 'SWAN') {
     return l2ChainInfo.contracts.l1SwanToken
   }
   return undefined
@@ -149,7 +151,7 @@ const Deposit: React.FC = () => {
               setIsApproving(true)
             } else {
               writeContract({
-                abi: USDCBridgeABI,
+                abi: StandardBridgeABI,
                 address: l2ChainInfo.contracts.l1UsdcBridge,
                 functionName: 'bridgeERC20',
                 args: [
@@ -162,7 +164,7 @@ const Deposit: React.FC = () => {
                 account: address,
               })
             }
-          } else if (sendToken === 'tSWAN') {
+          } else if (sendToken === 'tSWAN' || sendToken === 'SWAN') {
             const swanInWei = ethers.utils.parseEther(ethValue)
             if (Number(tokenAllowance) < Number(swanInWei)) {
               writeContract({
@@ -176,7 +178,7 @@ const Deposit: React.FC = () => {
               setIsApproving(true)
             } else {
               writeContract({
-                abi: USDCBridgeABI,
+                abi: StandardBridgeABI,
                 address: l2ChainInfo.contracts.l1StandardBridge,
                 functionName: 'bridgeERC20',
                 args: [
@@ -291,7 +293,7 @@ const Deposit: React.FC = () => {
       if (sendToken == 'USDC') {
         let usdcInWei = ethers.utils.parseUnits(ethValue, 'mwei')
         writeContract({
-          abi: USDCBridgeABI,
+          abi: StandardBridgeABI,
           address: l2ChainInfo.contracts.l1UsdcBridge,
           functionName: 'bridgeERC20',
           args: [
@@ -304,10 +306,10 @@ const Deposit: React.FC = () => {
           account: address,
         })
         setIsApproving(false)
-      } else if (sendToken == 'tSWAN') {
+      } else if (sendToken == 'tSWAN' || sendToken == 'SWAN') {
         let swanInWei = ethers.utils.parseEther(ethValue)
         writeContract({
-          abi: USDCBridgeABI,
+          abi: StandardBridgeABI,
           address: l2ChainInfo.contracts.l1StandardBridge,
           functionName: 'bridgeERC20',
           args: [
@@ -341,7 +343,7 @@ const Deposit: React.FC = () => {
               <div className="deposit_price_wrap flex-row jc">
                 <div className="deposit_price_title flex-row">
                   {l1ChainInfo.name === 'Ethereum' ||
-                    l1ChainInfo.name === 'Sepolia' ? (
+                  l1ChainInfo.name === 'Sepolia' ? (
                     <NextImage
                       src="/assets/images/network-ethereum.svg"
                       alt="To icn"
@@ -420,14 +422,19 @@ const Deposit: React.FC = () => {
                         onChange={({ target }) => setSendToken(target.value)}
                       >
                         <option value="ETH">ETH</option>
-                        {l1ChainInfo.chainId == 11155111 ? (
+                        {/*l1ChainInfo.chainId == 11155111 ? (
                           <>
                             <option value="USDC">USDC</option>
                             <option value="tSWAN">tSWAN</option>
                           </>
                         ) : (
                           <></>
-                        )}
+                        )*/}
+                        l1ChainInfo.chainId == 1 ? (
+                        <>
+                          <option value="SWAN">SWAN</option>
+                        </>
+                        ) : (<></>)
                         {/* <option value="DAI">DAI</option>
                           <option value="USDT">USDT</option>
                           <option value="wBTC">wBTC</option>  */}
@@ -444,7 +451,7 @@ const Deposit: React.FC = () => {
                   <small className="text-danger">{errorInput}</small>
                 )}
                 {Number(chain?.id) == Number(l1ChainInfo.chainId) &&
-                  balanceShow !== undefined ? (
+                balanceShow !== undefined ? (
                   address && (
                     <p className="wallet_bal text-right mt-2">
                       {balance?.formatted} {balance?.symbol} available
@@ -481,8 +488,8 @@ const Deposit: React.FC = () => {
                     To address
                   </span>
                   {l2ChainInfo &&
-                    l2ChainInfo.contracts &&
-                    l2ChainInfo.contracts.l1StandardBridge ? (
+                  l2ChainInfo.contracts &&
+                  l2ChainInfo.contracts.l1StandardBridge ? (
                     <p className="green flex-row">
                       {l2ChainInfo.contracts.l1StandardBridge?.slice(0, 4)}...
                       {l2ChainInfo.contracts.l1StandardBridge?.slice(-4)}
@@ -529,7 +536,11 @@ const Deposit: React.FC = () => {
                   </span>
                   <p>
                     {ethValue && address ? ethValue : '-'}{' '}
-                    {receivingTokens[sendToken as 'ETH' | 'USDC' | 'tSWAN']}
+                    {
+                      receivingTokens[
+                        sendToken as 'ETH' | 'USDC' | 'tSWAN' | 'SWAN'
+                      ]
+                    }
                   </p>
                 </div>
               </div>
@@ -604,28 +615,28 @@ const Deposit: React.FC = () => {
                   <button
                     className={
                       !isPending &&
-                        !isConfirming &&
-                        !isWriteContractPending &&
-                        !isWriteContractConfirming &&
-                        ethValue &&
-                        Number(ethValue) > 0
+                      !isConfirming &&
+                      !isWriteContractPending &&
+                      !isWriteContractConfirming &&
+                      ethValue &&
+                      Number(ethValue) > 0
                         ? 'btn deposit_btn flex-row'
                         : 'btn deposit_btn deposit_btn_disabled flex-row'
                     }
                     onClick={handleDeposit}
                     disabled={
                       isPending ||
-                        isConfirming ||
-                        isWriteContractConfirming ||
-                        isWriteContractPending
+                      isConfirming ||
+                      isWriteContractConfirming ||
+                      isWriteContractPending
                         ? true
                         : false
                     }
                   >
                     {isConfirming ||
-                      isPending ||
-                      isWriteContractConfirming ||
-                      isWriteContractPending ? (
+                    isPending ||
+                    isWriteContractConfirming ||
+                    isWriteContractPending ? (
                       <Spinner animation="border" role="status">
                         <span className="visually-hidden btn deposit_btn_disabled">
                           Loading...
