@@ -87,12 +87,12 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
         let withdrawal_list = withdrawal_data.withdraw_transaction_list || []
         console.log('API', withdrawal_list)
 
+        // get the ethers providers
         const providers = chainInfoFromConfig
           .slice(2)
           .reduce((acc: any, chainInfo: any) => {
             const provider = new ethers.providers.JsonRpcProvider(
               chainInfoAsObject[chainInfo.id].rpcUrl,
-              'any',
             )
 
             acc[chainInfo.id] = provider
@@ -100,7 +100,9 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
             return acc
           }, {})
 
+        // do some touch up on the withdrawal_list info
         withdrawal_list = await Promise.all(
+          // first filter saturn (depreciated)
           withdrawal_list
             .filter((w: any) => {
               console.log(w)
@@ -108,41 +110,53 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
             })
             .map(async (w: any) => {
               setLoader(true)
+              // get the txn and receipt
               let tx_hash = w.withdraw_tx_hash
-              // w.withdraw_tx_hash.slice(0, 2) == '0x'
-              //   ? w.withdraw_tx_hash
-              //   : `0x${w.withdraw_tx_hash}`
+              let txn = await providers[w.chain_id].getTransaction(tx_hash)
+              let receipt = await providers[w.chain_id].getTransactionReceipt(
+                tx_hash,
+              )
 
-              let receipt = await providers[w.chain_id].getTransaction(tx_hash)
-              let amount = ethers.utils.formatEther(receipt.value)
+              // default amount and symbol (will be replaced for erc20 transfers)
+              let amount = ethers.utils.formatEther(txn.value)
               let tokenSymbol = 'swanETH'
 
-              if (receipt.value == 0) {
-                console.log('ERC20 withdraw found')
+              // if value > 0 == swanETH transfer, else it is erc20
+              if (txn.value == 0) {
 
-                let blockNumber = receipt.blockNumber
+                // load ethers abi interface to scan event logs
+                const contractInterface = new ethers.utils.Interface(
+                  StandardBridgeABI,
+                )
 
-                let web3 = new Web3(providers[w.chain_id].connection.url)
+                // parse event logs, filtered by WithdrawalInitiated event
+                const eventLogs = receipt.logs
+                  .map((log: any) => {
+                    try {
+                      return contractInterface.parseLog(log)
+                    } catch {
+                      return null // Ignore logs that don't match the ABI
+                    }
+                  })
+                  .filter(
+                    (log: any) => log && log.name === 'WithdrawalInitiated',
+                  )
 
-                let contract = new web3.eth.Contract(StandardBridgeABI, chainInfoAsObject[w.chain_id].contracts.l2Bridge)
+                const withdrawInitiatedEvent = eventLogs.pop()
+                let l2Token = '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000'
 
-                const events = await contract.getPastEvents('WithdrawalInitiated' as 'allEvents', {
-                  fromBlock: blockNumber,
-                  toBlock: blockNumber,
-                }) 
-
-                const withdrawEvent = events.filter(e => typeof e !== 'string').filter((e: any) => e.transactionHash == tx_hash)
-                const withdrawTx: any = withdrawEvent.length > 0 ? withdrawEvent[0] : {returnValues: {l2Token: 'swanETH', amount}}
-                const l2Token: any = withdrawTx.returnValues.l2Token 
-
-                if (l2Token != '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') {
-                  let tokenContract = new web3.eth.Contract(ERC20ABI, withdrawTx.returnValues.l2Token as any)
-                  tokenSymbol = await tokenContract.methods.symbol().call()
-                  amount = ethers.utils.formatEther(withdrawTx.returnValues.amount)
+                if (withdrawInitiatedEvent) {
+                  l2Token = withdrawInitiatedEvent.args.l2Token
                 }
-                
-              }
 
+                // read the token symbol from the token contract
+                if (l2Token != '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000') {
+                  const tokenContract = new ethers.Contract(l2Token, ERC20ABI, providers[w.chain_id]);
+                  tokenSymbol = await tokenContract.symbol();
+                  amount = ethers.utils.formatEther(withdrawInitiatedEvent.args.amount)
+                  console.log(tokenSymbol, amount)
+                }
+              }
 
               setLoader(false)
 
@@ -152,7 +166,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
                 amount,
                 // timestamp: block.timestamp,
                 block_number: receipt.blockNumber,
-                tokenSymbol
+                tokenSymbol,
                 // receipt: await l2Provider.getTransaction(tx_hash),
               }
             }),
@@ -334,7 +348,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
       // })
 
       // console.log(result.data)
-    } catch (error:any) {
+    } catch (error: any) {
       setLoader(false)
       if (
         error.reason ===
@@ -435,7 +449,7 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
                 <tbody>
                   {withdrawals.map((withdrawal: any, index) => (
                     <tr
-                      className='withdraw-row'
+                      className="withdraw-row"
                       key={index}
                       onClick={async (e: any) => {
                         // console.log('td:', e.target.className)
@@ -507,7 +521,9 @@ const WithdrawHistory: React.FC = (walletAddress: any) => {
                   </div>
                   <div className="modal-amoumt">
                     <span className="title">Amount to withdraw</span>
-                    <span className="text">{modalData.amount} {modalData.tokenSymbol}</span>
+                    <span className="text">
+                      {modalData.amount} {modalData.tokenSymbol}
+                    </span>
                   </div>
                   <div className="withdraw-flow">
                     <ul>
