@@ -1,17 +1,19 @@
 // Temp disable server side rendering for min viable product
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import { createWeb3Modal } from '@web3modal/wagmi/react'
-import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
+
+import { cookieStorage, createStorage, http } from '@wagmi/core'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import {
-  WagmiProvider,
-  createConfig,
-  http,
-  cookieStorage,
-  createStorage,
-  cookieToInitialState,
-} from 'wagmi'
-import { sepolia, mainnet } from 'wagmi/chains'
+  mainnet,
+  sepolia,
+  arbitrum,
+  optimismSepolia,
+  optimism,
+} from '@reown/appkit/networks'
+import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
+import { createAppKit } from '@reown/appkit/react' 
+
 import { injected } from 'wagmi/connectors'
 import Header from '../components/common/Header'
 import Footer from '../components/common/Footer'
@@ -154,61 +156,51 @@ const noopStorage = {
   removeItem: (_key: any) => {},
 }
 
+// Set up metadata
 const metadata = {
-  name: 'Web3Modal',
-  description: 'Web3Modal Example',
-  url: 'https://web3modal.com', // origin must match your domain & subdomain
-  icons: ['https://avatars.githubusercontent.com/u/37784886'],
+  name: 'swanchain-bridge',
+  description: 'AppKit Example',
+  url: 'https://reown.com/appkit', // origin must match your domain & subdomain
+  icons: ['https://assets.reown.com/reown-profile-pic.png'],
 }
 
-export const wagmiConfig = defaultWagmiConfig({
-  chains: [
-    sepolia,
-    {
-      ...mainnet,
-      testnet: false,
-      rpcUrls: {
-        default: {
-          http: ['https://eth.llamarpc.com'],
-        },
+export const networks = [
+  sepolia,
+  {
+    ...mainnet,
+    testnet: false,
+    rpcUrls: {
+      default: {
+        http: ['https://eth.llamarpc.com'],
       },
     },
-    SWAN_PROXIMA,
-    // SWAN_SATURN,
-    SWAN_MAINNET,
-  ],
-  projectId: String(process.env.NEXT_PUBLIC_PRODUCT_ID),
-  metadata,
-  ssr: true,
-  // storage: createStorage({
-  //   storage: cookieStorage,
-  // }),
-  // ...wagmiOptions // Optional - Override createConfig parameters
-})
-
-createWeb3Modal({
-  wagmiConfig: wagmiConfig,
-  projectId: String(process.env.NEXT_PUBLIC_PRODUCT_ID),
-  themeVariables: {
-    '--w3m-accent': '#447dff',
-    '--w3m-border-radius-master': '32px',
   },
+  SWAN_PROXIMA,
+  // SWAN_SATURN,
+  SWAN_MAINNET,
+]
+
+//Set up the Wagmi Adapter (Config)
+export const wagmiAdapter = new WagmiAdapter({
+  storage: createStorage({
+    storage: cookieStorage,
+  }),
+  ssr: true,
+  projectId: String(process.env.NEXT_PUBLIC_PRODUCT_ID),
+  networks,
 })
 
-// export const provider = createConfig({
-//   chains: [SWAN, sepolia, SWAN_PROXIMA],
-//   connectors: [injected()],
-//   multiInjectedProviderDiscovery: true,
-//   syncConnectedChain: true,
-//   storage: createStorage({
-//     storage: typeof window !== 'undefined' ? window.localStorage : noopStorage,
-//   }),
-//   transports: {
-//     [SWAN.id]: http(SWAN.rpcUrls.default.http[0]),
-//     [SWAN_PROXIMA.id]: http(SWAN_PROXIMA.rpcUrls.default.http[0]),
-//     [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
-//   },
-// })
+// Create the modal
+const modal = createAppKit({
+  adapters: [wagmiAdapter],
+  projectId: String(process.env.NEXT_PUBLIC_PRODUCT_ID),
+  networks: [sepolia, mainnet, SWAN_PROXIMA, SWAN_MAINNET],
+  defaultNetwork: mainnet,
+  metadata: metadata,
+  features: {
+    analytics: true, // Optional - defaults to your Cloud configuration
+  }
+})
 
 export const connector = injected({ target: 'metaMask' })
 export const MainnetContext = createContext<any>(null)
@@ -225,7 +217,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <MainnetContext.Provider value={{ isMainnet, setIsMainnet }}>
-      <WagmiProvider config={wagmiConfig}>
+      <WagmiProvider config={wagmiAdapter.wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           <Head>
             <title>SwanETH Bridge</title>
