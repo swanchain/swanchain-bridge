@@ -61,8 +61,8 @@
       }
     }
   }
-  .page-select-conatainer{
-    .footer_btn{
+  .page-select-conatainer {
+    .footer_btn {
       padding: 8px 10px 8px 20px;
       background-color: rgb(30, 32, 37);
       font-size: 16px;
@@ -72,14 +72,18 @@
       box-shadow: none;
       cursor: pointer;
       transition: all 0.3s;
-      &:hover{
+      &:hover {
         transform: scale(1.05);
       }
-      svg{
+      svg {
         width: 16px;
         margin: 0 0 0 8px;
         fill: #a1a1aa;
       }
     }
   }
+}
+
+.commit_hash {
+  color: #a1a1aa;
 }
