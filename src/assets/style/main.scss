@@ -420,3 +420,15 @@ input[type='number'] {
     transform: translate(24px, 0);
   }
 }
+
+.flex-main {
+  display: flex;
+  gap: 25px;
+}
+
+@media (max-width: 400px) {
+  .flex-main {
+    flex-direction: column; /* Chuyển thành cột khi không đủ không gian */
+    gap: 15px; /* Thêm khoảng cách nhỏ hơn */
+  }
+}
