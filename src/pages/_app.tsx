@@ -172,7 +172,7 @@ export const networks = [
     testnet: false,
     rpcUrls: {
       default: {
-        http: ['https://eth.llamarpc.com'],
+        http: ['https://ethereum-rpc.publicnode.com'],
       },
     },
   },
